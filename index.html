@@ -1,0 +1,1580 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家有大厨 💕</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --pink-50: #FFF5F7;
+  --pink-100: #FFE8ED;
+  --pink-200: #FFD0DB;
+  --pink-300: #FFB6C8;
+  --pink-400: #FF8FAB;
+  --pink-500: #E75480;
+  --pink-600: #D63D6C;
+  --blue-50: #F0F7FF;
+  --blue-100: #DCEEFF;
+  --blue-400: #6CB4EE;
+  --blue-500: #4A90D9;
+  --peach: #FFF0E8;
+  --cream: #FFFAF5;
+  --warm-white: #FFFBF8;
+  --text-1: #4A2C3D;
+  --text-2: #7D5A6B;
+  --text-3: #A88B9A;
+  --text-4: #CDB5C2;
+  --border: #FFE8ED;
+  --shadow-s: 0 1px 8px rgba(231,84,128,0.06);
+  --shadow-m: 0 4px 20px rgba(231,84,128,0.08);
+  --shadow-l: 0 8px 32px rgba(231,84,128,0.12);
+  --r-s: 8px;
+  --r-m: 12px;
+  --r-l: 16px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  background: var(--warm-white);
+  color: var(--text-1);
+  width: 100%;
+  margin: 0 auto;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ====== Floating Hearts ====== */
+.hearts-bg {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none; z-index: 0; overflow: hidden;
+  width: 100%; margin: 0 auto;
+  background: linear-gradient(180deg, rgba(255,230,240,0.3) 0%, rgba(255,245,248,0.2) 50%, rgba(255,248,242,0.3) 100%);
+}
+.hearts-bg i {
+  position: absolute; font-style: normal; font-size: 12px;
+  opacity: 0.15; animation: fh linear infinite;
+}
+@keyframes fh {
+  0% { transform: translateY(105vh) rotate(0deg); opacity: 0; }
+  8% { opacity: 0.15; }
+  92% { opacity: 0.15; }
+  100% { transform: translateY(-5vh) rotate(360deg); opacity: 0; }
+}
+
+/* Decorative sparkles */
+.sparkle {
+  position: absolute; font-size: 14px; pointer-events: none;
+  animation: sparkle 2s ease-in-out infinite;
+}
+@keyframes sparkle {
+  0%,100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 0.8; transform: scale(1.2); }
+}
+
+/* ====== Pages ====== */
+.page { display: none; min-height: 100vh; position: relative; z-index: 1; }
+.page.active { display: flex; flex-direction: column; }
+
+/* ================ LOGIN PAGE ================ */
+.login-page {
+  min-height: 100vh;
+  background: linear-gradient(160deg, #FFE4EC 0%, #FFD8CC 40%, #FFF0E8 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 40px 32px;
+  position: relative; overflow: hidden;
+}
+.login-page::before {
+  content: ''; position: absolute; top: -60px; right: -60px;
+  width: 180px; height: 180px; background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.login-page::after {
+  content: ''; position: absolute; bottom: -40px; left: -40px;
+  width: 120px; height: 120px; background: radial-gradient(circle, rgba(255,215,0,0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Decorative borders */
+.login-border-top {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 3px; background: linear-gradient(90deg, transparent, var(--pink-300), var(--pink-400), var(--pink-300), transparent);
+  pointer-events: none;
+}
+.login-border-bottom {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px; background: linear-gradient(90deg, transparent, var(--peach), var(--pink-200), var(--peach), transparent);
+  pointer-events: none;
+}
+
+.login-logo {
+  font-size: 56px; margin-bottom: 8px;
+  animation: logoBounce 2s ease-in-out infinite;
+  filter: drop-shadow(0 4px 8px rgba(231,84,128,0.3));
+}
+@keyframes logoBounce {
+  0%,100% { transform: translateY(0) rotate(0deg) scale(1); }
+  25% { transform: translateY(-8px) rotate(-5deg) scale(1.1); }
+  75% { transform: translateY(-8px) rotate(5deg) scale(1.1); }
+}
+.login-title {
+  font-size: 28px; font-weight: 800; color: var(--text-1);
+  margin-bottom: 4px; letter-spacing: 2px;
+}
+.login-subtitle {
+  font-size: 13px; color: var(--text-2); margin-bottom: 36px;
+}
+
+/* Avatar upload on login */
+.login-avatar-wrap {
+  position: relative; margin-bottom: 20px; cursor: pointer;
+  display: block;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.login-avatar {
+  width: 80px; height: 80px; border-radius: 50%;
+  border: 3px solid white; box-shadow: var(--shadow-m);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; overflow: hidden;
+  background: linear-gradient(135deg, #FFB6C1, #FF8FAB);
+  transition: transform 0.3s;
+}
+.login-avatar:active { transform: scale(0.95); }
+.login-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.login-avatar-badge {
+  position: absolute; bottom: 0; right: 0;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: white; border: 2px solid var(--pink-300);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+}
+.login-avatar-hint {
+  font-size: 11px; color: var(--text-3); margin-top: 6px; text-align: center;
+}
+
+.login-name-input {
+  width: 100%; border: 2px solid rgba(255,255,255,0.8); border-radius: 14px;
+  padding: 14px 18px; font-size: 15px; text-align: center;
+  background: rgba(255,255,255,0.6); backdrop-filter: blur(10px);
+  color: var(--text-1); outline: none; font-family: inherit;
+  margin-bottom: 24px; transition: border-color 0.3s;
+}
+.login-name-input::placeholder { color: var(--text-4); }
+.login-name-input:focus { border-color: var(--pink-400); background: rgba(255,255,255,0.8); }
+
+.login-role-title {
+  font-size: 14px; font-weight: 600; color: var(--text-2);
+  margin-bottom: 14px;
+}
+
+.role-cards {
+  display: flex; gap: 14px; margin-bottom: 32px; width: 100%;
+}
+.role-card {
+  flex: 1; background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+  backdrop-filter: blur(10px);
+  border: 2.5px solid transparent; border-radius: 18px;
+  padding: 22px 12px; text-align: center; cursor: pointer;
+  transition: all 0.3s; position: relative; overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.role-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 3px; background: linear-gradient(90deg, transparent, currentColor, transparent);
+  opacity: 0.3;
+  pointer-events: none;
+}
+.role-card:active { transform: scale(0.96); }
+.role-card:hover { transform: scale(1.02); }
+/* Use :has() selector to highlight selected radio input's label */
+input[name="role"]:checked + label#roleFoodie {
+  border-color: var(--pink-400);
+  background: linear-gradient(135deg, rgba(255,230,238,0.9), rgba(255,200,220,0.8));
+  box-shadow: 0 4px 20px rgba(231,84,128,0.15), inset 0 0 20px rgba(255,143,171,0.1);
+}
+input[name="role"]:checked + label#roleFoodie .role-check {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--pink-400), var(--pink-500));
+  color: white;
+  font-size: 13px;
+}
+
+input[name="role"]:checked + label#roleChef {
+  border-color: var(--blue-400);
+  background: linear-gradient(135deg, rgba(220,238,255,0.9), rgba(180,220,255,0.8));
+  box-shadow: 0 4px 20px rgba(74,144,217,0.15), inset 0 0 20px rgba(108,180,238,0.1);
+}
+input[name="role"]:checked + label#roleChef .role-check {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--blue-400), var(--blue-500));
+  color: white;
+  font-size: 13px;
+}
+.role-emoji { font-size: 36px; margin-bottom: 8px; display: block; }
+.role-name { font-size: 16px; font-weight: 700; margin-bottom: 3px; }
+.role-desc { font-size: 11px; color: var(--text-3); }
+.role-check {
+  position: absolute; top: 10px; right: 10px;
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 2px solid var(--text-4); display: flex;
+  align-items: center; justify-content: center;
+  font-size: 12px; transition: all 0.3s; color: transparent;
+  pointer-events: none;
+}
+.role-card.selected-foodie .role-check,
+.role-card.selected-chef .role-check {
+  border-color: transparent; color: white; font-size: 13px;
+}
+.role-card.selected-foodie .role-check { background: var(--pink-400); }
+.role-card.selected-chef .role-check { background: var(--blue-400); }
+
+.login-btn {
+  width: 100%; height: 52px; border: none; border-radius: 26px;
+  font-size: 17px; font-weight: 700; cursor: pointer;
+  color: white; letter-spacing: 1px; transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(231,84,128,0.3);
+  background: linear-gradient(135deg, var(--pink-400), var(--pink-500));
+  display: block; line-height: 52px; text-align: center;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.login-btn:active { transform: scale(0.97); }
+
+/* ================ TOP BAR ================ */
+.top-bar {
+  background: linear-gradient(135deg, #FFE4EC 0%, #FFD8CC 100%);
+  padding: 46px 16px 12px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+  position: relative;
+}
+.top-bar::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 1px; background: linear-gradient(90deg, transparent, rgba(255,182,193,0.4), transparent);
+  pointer-events: none;
+}
+.top-left { display: flex; align-items: center; gap: 10px; }
+.mini-avatars { display: flex; align-items: center; gap: 4px; }
+.mini-av {
+  width: 34px; height: 34px; border-radius: 50%; border: 2px solid white;
+  display: flex; align-items: center; justify-content: center; font-size: 17px;
+  cursor: pointer; overflow: hidden; transition: transform 0.2s;
+  background: linear-gradient(135deg, #ddd, #eee);
+}
+.mini-av:active { transform: scale(0.9); }
+.mini-av img { width: 100%; height: 100%; object-fit: cover; }
+.mini-av.foodie-av { background: linear-gradient(135deg, #FFB6C1, #FF8FAB); }
+.mini-av.chef-av { background: linear-gradient(135deg, #87CEEB, #6CB4EE); }
+.heart-mini { font-size: 12px; animation: hp 1.2s ease-in-out infinite; }
+@keyframes hp { 0%,100%{transform:scale(1)} 50%{transform:scale(1.3)} }
+.top-title { font-size: 17px; font-weight: 700; }
+.top-sub { font-size: 11px; color: var(--text-3); }
+
+.top-right { display: flex; align-items: center; gap: 8px; }
+.role-indicator {
+  padding: 4px 12px; border-radius: 16px;
+  font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 4px;
+}
+.role-indicator.foodie {
+  background: var(--pink-100); color: var(--pink-500);
+}
+.role-indicator.chef {
+  background: var(--blue-100); color: var(--blue-500);
+}
+.logout-btn {
+  width: 30px; height: 30px; border-radius: 10px; border: none;
+  background: rgba(255,255,255,0.6); font-size: 14px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+
+/* ================ MENU LAYOUT ================ */
+.menu-body { flex: 1; display: flex; overflow: hidden; }
+
+.side-cats {
+  width: 78px; background: linear-gradient(180deg, #FFF5F7 0%, #FFE8ED 100%); overflow-y: auto;
+  flex-shrink: 0; padding: 6px 0;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+}
+.side-cats::before {
+  content: ''; position: absolute; right: 0; top: 0; bottom: 0;
+  width: 1px; background: linear-gradient(180deg, transparent, rgba(231,84,128,0.1), transparent);
+  pointer-events: none;
+}
+.side-cats::-webkit-scrollbar { display: none; }
+
+.side-cat {
+  padding: 13px 4px; text-align: center; cursor: pointer;
+  font-size: 11px; color: var(--text-3); position: relative;
+  transition: all 0.25s; border: none; background: transparent;
+  display: block; width: 100%;
+}
+.side-cat .cat-icon { font-size: 22px; display: block; margin-bottom: 2px; }
+.side-cat .cat-name { display: block; line-height: 1.3; }
+.side-cat:hover { background: rgba(255,255,255,0.6); }
+.side-cat.active {
+  background: linear-gradient(90deg, rgba(255,255,255,0.9), rgba(255,230,240,0.5));
+  color: var(--text-1); font-weight: 600;
+}
+.side-cat.active::before {
+  content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 20px; border-radius: 0 3px 3px 0;
+  background: linear-gradient(180deg, var(--pink-400), var(--pink-500));
+  box-shadow: 0 0 8px rgba(231,84,128,0.4);
+  pointer-events: none;
+}
+
+.dish-area {
+  flex: 1; overflow-y: auto; padding: 8px 12px 90px;
+  -webkit-overflow-scrolling: touch;
+}
+.dish-area::-webkit-scrollbar { display: none; }
+
+.cat-section-title {
+  font-size: 14px; font-weight: 600; color: var(--text-2);
+  padding: 10px 0 8px; display: flex; align-items: center; gap: 6px;
+  border-bottom: 1px solid var(--border); margin-bottom: 8px;
+}
+
+/* Dish Card */
+.dish-card {
+  display: flex; gap: 10px; padding: 10px 0;
+  border-bottom: 1px solid #FFF0F3;
+}
+.dish-card:last-child { border-bottom: none; }
+
+.dish-img-wrap {
+  width: 78px; height: 78px; border-radius: var(--r-m);
+  overflow: hidden; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--pink-50), var(--peach));
+  display: flex; align-items: center; justify-content: center;
+}
+.dish-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+.dish-img-wrap .emoji-placeholder { font-size: 36px; }
+
+.dish-info { flex: 1; display: flex; flex-direction: column; justify-content: space-between; min-width: 0; }
+.dish-name { font-size: 14px; font-weight: 600; margin-bottom: 1px; }
+.dish-desc {
+  font-size: 11px; color: var(--text-3); line-height: 1.4;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.dish-tags { display: flex; gap: 3px; margin-top: 2px; }
+.dish-tag {
+  font-size: 9px; padding: 1px 5px; border-radius: 3px;
+  background: var(--pink-50); color: var(--pink-500);
+}
+
+.dish-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 3px; }
+.dish-price { font-size: 16px; font-weight: 700; color: var(--pink-500); }
+.dish-price .u { font-size: 11px; font-weight: 500; }
+
+/* Cart controls */
+.cart-ctl { display: flex; align-items: center; gap: 6px; }
+.cart-ctl .minus, .cart-ctl .plus {
+  width: 24px; height: 24px; border-radius: 50%; border: none;
+  font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.cart-ctl .minus { background: var(--pink-100); color: var(--pink-500); }
+.cart-ctl .plus {
+  background: linear-gradient(135deg, var(--pink-400), var(--pink-500));
+  color: white; box-shadow: 0 2px 6px rgba(231,84,128,0.3);
+}
+.cart-ctl .plus:active { transform: scale(0.85); }
+.cart-ctl .qty { font-size: 14px; font-weight: 600; min-width: 18px; text-align: center; }
+
+.add-first {
+  width: 28px; height: 28px; border-radius: 50%; border: none;
+  background: linear-gradient(135deg, var(--pink-400), var(--pink-500)); color: white;
+  font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(231,84,128,0.3); transition: all 0.2s;
+}
+.add-first:active { transform: scale(0.85); }
+
+/* ====== Cart Float ====== */
+.cart-float {
+  position: fixed; bottom: 68px; left: 50%; transform: translateX(-50%);
+  width: calc(100% - 40px); max-width: 390px;
+  background: linear-gradient(135deg, var(--pink-500), var(--pink-600));
+  border-radius: 26px; padding: 10px 10px 10px 18px;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: var(--shadow-l); z-index: 100;
+  transition: all 0.3s; cursor: pointer;
+}
+.cart-float.hidden { transform: translateX(-50%) translateY(120px); opacity: 0; pointer-events: none; }
+.cart-float-left { display: flex; align-items: center; gap: 10px; color: white; }
+.cart-icon-wrap { position: relative; font-size: 24px; }
+.cart-badge-float {
+  position: absolute; top: -6px; right: -8px;
+  background: #FFD700; color: var(--text-1); font-size: 10px; font-weight: 700;
+  min-width: 16px; height: 16px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; padding: 0 4px;
+}
+.cart-total-text { font-size: 13px; font-weight: 400; opacity: 0.9; color: white; }
+.cart-total-price { font-size: 20px; font-weight: 700; color: white; }
+.cart-total-price .u { font-size: 12px; font-weight: 400; }
+.cart-submit-btn {
+  background: white; border: none; border-radius: 22px;
+  padding: 10px 20px; font-size: 14px; font-weight: 600;
+  color: var(--pink-500); cursor: pointer; transition: all 0.2s;
+}
+.cart-submit-btn:active { transform: scale(0.95); }
+
+/* ====== Common Page Header ====== */
+.pg-header {
+  padding: 46px 20px 14px;
+  background: white; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+}
+.back-btn {
+  width: 34px; height: 34px; border-radius: 12px; border: none;
+  background: var(--pink-50); color: var(--pink-500); font-size: 16px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.pg-title { font-size: 17px; font-weight: 600; flex: 1; }
+.pg-action {
+  border: none; background: transparent; color: var(--text-3);
+  font-size: 13px; cursor: pointer;
+}
+
+/* ====== Cart Page ====== */
+.cart-list { padding: 12px 20px; flex: 1; overflow-y: auto; }
+.cart-item {
+  display: flex; align-items: center; gap: 12px;
+  background: white; border-radius: var(--r-l); padding: 12px;
+  margin-bottom: 10px; box-shadow: var(--shadow-s);
+}
+.cart-item-img {
+  width: 54px; height: 54px; border-radius: var(--r-s);
+  background: linear-gradient(135deg, var(--pink-50), var(--peach));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; flex-shrink: 0; overflow: hidden;
+}
+.cart-item-img img { width: 100%; height: 100%; object-fit: cover; }
+.cart-item-info { flex: 1; min-width: 0; }
+.cart-item-name { font-size: 14px; font-weight: 600; }
+.cart-item-price { font-size: 14px; font-weight: 700; color: var(--pink-500); margin-top: 2px; }
+
+.love-note-box {
+  margin: 6px 20px 16px; background: white; border-radius: var(--r-l);
+  padding: 14px 16px; box-shadow: var(--shadow-s);
+}
+.love-note-label { font-size: 13px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
+.love-note-input {
+  width: 100%; border: 1.5px solid var(--border); border-radius: var(--r-s);
+  padding: 10px 12px; font-size: 13px; color: var(--text-1); outline: none;
+  transition: border-color 0.3s; font-family: inherit; resize: none; height: 54px;
+}
+.love-note-input::placeholder { color: var(--text-4); }
+.love-note-input:focus { border-color: var(--pink-300); }
+
+.checkout-bar {
+  padding: 12px 20px; padding-bottom: max(12px, env(safe-area-inset-bottom));
+  background: white; border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.checkout-total .label { font-size: 12px; color: var(--text-3); }
+.checkout-total .price { font-size: 22px; font-weight: 800; color: var(--pink-500); }
+.checkout-total .price .u { font-size: 13px; font-weight: 400; }
+.checkout-btn {
+  height: 44px; padding: 0 28px; border-radius: 22px; border: none;
+  background: linear-gradient(135deg, var(--pink-400), var(--pink-500));
+  color: white; font-size: 15px; font-weight: 600; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(231,84,128,0.3); transition: all 0.2s;
+}
+.checkout-btn:active { transform: scale(0.95); }
+
+/* Empty */
+.empty-state { text-align: center; padding: 60px 40px; }
+.empty-icon { font-size: 56px; margin-bottom: 12px; }
+.empty-text { font-size: 14px; color: var(--text-3); }
+.empty-hint { font-size: 12px; color: var(--text-4); margin-top: 4px; }
+
+/* ====== Orders ====== */
+.order-card {
+  margin: 10px 20px; background: white; border-radius: var(--r-l);
+  padding: 14px 16px; box-shadow: var(--shadow-s);
+}
+.order-head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed var(--border);
+}
+.order-time { font-size: 12px; color: var(--text-3); }
+.order-status { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+.order-status.pending { background: var(--pink-100); color: var(--pink-500); }
+.order-status.cooking { background: #FFF3E0; color: #F57C00; }
+.order-status.done { background: #E8F5E9; color: #43A047; }
+.order-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 13px; }
+.order-row .n { display: flex; align-items: center; gap: 5px; }
+.order-foot {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 10px; margin-top: 10px; border-top: 1px solid var(--pink-50);
+}
+.order-from { font-size: 11px; color: var(--text-3); }
+.order-total { font-size: 15px; font-weight: 700; color: var(--pink-500); }
+.order-msg {
+  margin-top: 8px; padding: 8px 12px;
+  background: linear-gradient(135deg, var(--pink-50), var(--peach));
+  border-radius: var(--r-s); font-size: 12px; color: var(--text-2);
+  font-style: italic; display: flex; gap: 5px;
+}
+/* Chef: order action buttons */
+.order-actions { display: flex; gap: 8px; margin-top: 10px; }
+.order-actions button {
+  flex: 1; height: 34px; border-radius: 17px; border: none;
+  font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+}
+.btn-start-cook {
+  background: linear-gradient(135deg, #FFB347, #FF8C00); color: white;
+  box-shadow: 0 2px 8px rgba(255,140,0,0.2);
+}
+.btn-finish-cook {
+  background: linear-gradient(135deg, #66BB6A, #43A047); color: white;
+  box-shadow: 0 2px 8px rgba(67,160,71,0.2);
+}
+
+/* ====== Manage Page ====== */
+.manage-list { padding: 10px 20px 100px; flex: 1; overflow-y: auto; }
+.manage-card {
+  display: flex; gap: 12px; background: white; border-radius: var(--r-l);
+  padding: 12px; margin-bottom: 10px; box-shadow: var(--shadow-s);
+  align-items: center;
+}
+.manage-img {
+  width: 56px; height: 56px; border-radius: var(--r-s);
+  background: linear-gradient(135deg, var(--pink-50), var(--peach));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; flex-shrink: 0; overflow: hidden;
+}
+.manage-img img { width: 100%; height: 100%; object-fit: cover; }
+.manage-info { flex: 1; min-width: 0; }
+.manage-name { font-size: 14px; font-weight: 600; }
+.manage-meta { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+.manage-actions { display: flex; gap: 6px; }
+.manage-actions button {
+  width: 32px; height: 32px; border-radius: 8px; border: none;
+  font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.btn-edit { background: var(--pink-50); color: var(--pink-500); }
+.btn-del { background: #FFF0F0; color: #E74C3C; }
+
+.add-dish-fab {
+  position: fixed; bottom: 74px; right: calc(50% - 195px);
+  width: 50px; height: 50px; border-radius: 50%; border: none;
+  background: linear-gradient(135deg, var(--pink-400), var(--pink-500));
+  color: white; font-size: 26px; cursor: pointer;
+  box-shadow: var(--shadow-l); z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+}
+.add-dish-fab:active { transform: scale(0.9); }
+
+/* ====== Modals ====== */
+.modal-mask {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.45); z-index: 999;
+  display: none; align-items: flex-end; justify-content: center;
+  width: 100%; margin: 0 auto;
+}
+.modal-mask.show { display: flex; }
+.modal-sheet {
+  background: white; border-radius: 24px 24px 0 0; width: 100%;
+  padding: 20px 24px; padding-bottom: max(24px, env(safe-area-inset-bottom));
+  max-height: 85vh; overflow-y: auto; animation: sheetUp 0.35s ease;
+}
+@keyframes sheetUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+.sheet-handle { width: 36px; height: 4px; background: #E0D5DA; border-radius: 2px; margin: 0 auto 16px; }
+.sheet-title { font-size: 17px; font-weight: 700; margin-bottom: 18px; text-align: center; }
+
+.form-group { margin-bottom: 14px; }
+.form-label { font-size: 13px; font-weight: 600; color: var(--text-2); margin-bottom: 6px; display: block; }
+.form-input {
+  width: 100%; border: 1.5px solid var(--border); border-radius: var(--r-s);
+  padding: 10px 14px; font-size: 14px; color: var(--text-1); outline: none;
+  font-family: inherit; transition: border-color 0.3s;
+}
+.form-input:focus { border-color: var(--pink-300); }
+.form-textarea { resize: none; height: 60px; }
+
+.img-upload {
+  width: 100%; height: 120px; border: 2px dashed var(--pink-200);
+  border-radius: var(--r-m); display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px;
+  cursor: pointer; transition: all 0.3s; background: var(--pink-50);
+  overflow: hidden; position: relative;
+}
+.img-upload:hover { border-color: var(--pink-400); background: var(--pink-100); }
+.img-upload .upload-icon { font-size: 28px; }
+.img-upload .upload-text { font-size: 12px; color: var(--text-3); }
+.img-upload img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+.img-upload .change-hint {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: rgba(0,0,0,0.4); color: white; font-size: 11px;
+  text-align: center; padding: 4px; display: none;
+}
+.img-upload:hover .change-hint { display: block; }
+
+.cat-select { display: flex; flex-wrap: wrap; gap: 8px; }
+.cat-option {
+  padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--border);
+  background: white; font-size: 12px; cursor: pointer; transition: all 0.3s;
+  color: var(--text-3);
+}
+.cat-option.active {
+  border-color: var(--pink-400); background: var(--pink-100); color: var(--pink-500); font-weight: 600;
+}
+
+.form-btns { display: flex; gap: 10px; margin-top: 20px; }
+.form-btns button {
+  flex: 1; height: 44px; border-radius: 22px; border: none;
+  font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+}
+.btn-cancel { background: var(--pink-50); color: var(--text-3); }
+.btn-save {
+  background: linear-gradient(135deg, var(--pink-400), var(--pink-500));
+  color: white; box-shadow: 0 4px 14px rgba(231,84,128,0.3);
+}
+.btn-save:active { transform: scale(0.95); }
+
+/* Success Modal */
+.success-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4); z-index: 1000;
+  display: none; align-items: center; justify-content: center;
+  width: 100%; margin: 0 auto;
+}
+.success-overlay.show { display: flex; }
+.success-box {
+  background: white; border-radius: 24px; padding: 32px 28px 24px;
+  text-align: center; margin: 0 24px; animation: pop 0.4s ease;
+  position: relative; overflow: hidden;
+}
+.success-box::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--pink-300), var(--peach), var(--pink-300));
+  pointer-events: none;
+}
+@keyframes pop { 0%{transform:scale(0.7);opacity:0} 100%{transform:scale(1);opacity:1} }
+.success-emoji { font-size: 52px; margin-bottom: 10px; animation: bounce 1s ease infinite; }
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+.success-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.success-desc { font-size: 13px; color: var(--text-2); margin-bottom: 20px; line-height: 1.6; }
+.success-btn {
+  width: 100%; height: 44px; border: none; border-radius: 22px;
+  background: linear-gradient(135deg, var(--pink-400), var(--pink-500));
+  color: white; font-size: 15px; font-weight: 600; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(231,84,128,0.3);
+}
+
+/* Avatar change modal */
+.avatar-modal {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.45); z-index: 1000;
+  display: none; align-items: center; justify-content: center;
+  width: 100%; margin: 0 auto;
+}
+.avatar-modal.show { display: flex; }
+.avatar-modal-box {
+  background: white; border-radius: 20px; padding: 28px 24px;
+  text-align: center; margin: 0 32px; animation: pop 0.3s ease; width: 100%;
+}
+.avatar-preview {
+  width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 16px;
+  overflow: hidden; border: 3px solid var(--pink-200);
+  display: flex; align-items: center; justify-content: center; font-size: 44px;
+  background: linear-gradient(135deg, var(--pink-50), var(--peach));
+}
+.avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ====== Tab Bar ====== */
+.tab-bar {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(20px); display: flex;
+  padding: 4px 0; padding-bottom: max(4px, env(safe-area-inset-bottom));
+  border-top: 1px solid rgba(255,182,193,0.15); z-index: 200;
+}
+.tab-item {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  gap: 1px; padding: 5px 0; cursor: pointer; border: none; background: transparent;
+  position: relative;
+}
+.tab-icon { font-size: 22px; transition: transform 0.3s; }
+.tab-label { font-size: 10px; color: var(--text-4); transition: color 0.3s; }
+.tab-item.active .tab-label { color: var(--pink-500); font-weight: 600; }
+.tab-item.active .tab-icon { transform: scale(1.1); }
+.tab-badge {
+  position: absolute; top: 0; right: 50%; margin-right: -16px;
+  background: #FF6B81; color: white; font-size: 9px; font-weight: 700;
+  min-width: 15px; height: 15px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; padding: 0 3px;
+}
+
+::-webkit-scrollbar { width: 0; height: 0; }
+</style>
+</head>
+<body>
+
+<div class="hearts-bg" id="heartsBg"></div>
+
+<!-- ================ LOGIN PAGE ================ -->
+<div class="page active" id="page-login">
+  <div class="login-page">
+    <div class="login-logo">💕</div>
+    <div class="login-title">家有大厨</div>
+    <div class="login-subtitle">属于我们的私房小厨房 💕</div>
+
+    <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="handleAvatar(this)">
+    <div class="login-avatar-wrap" id="avatarWrap">
+      <div class="login-avatar" id="loginAvatar">😊</div>
+    </div>
+
+    <input class="login-name-input" id="loginName" placeholder="输入你的昵称" maxlength="10">
+
+    <div class="login-role-title">选择你的身份</div>
+    <div class="role-cards">
+      <div class="role-card" data-role="foodie" id="cardFoodie">
+        <span class="role-emoji">🤤</span>
+        <div class="role-name">可爱吃货</div>
+        <div class="role-desc">负责点菜～想吃就点</div>
+      </div>
+      <div class="role-card" data-role="chef" id="cardChef">
+        <span class="role-emoji">👨‍🍳</span>
+        <div class="role-name">帅气大厨</div>
+        <div class="role-desc">负责做菜～使命必达</div>
+      </div>
+    </div>
+
+    <div class="login-btn" id="loginBtn">进入厨房 💕</div>
+  </div>
+</div>
+
+<!-- ================ MENU PAGE ================ -->
+<div class="page" id="page-menu">
+  <div class="top-bar" id="topBar">
+    <div class="top-left">
+      <div class="mini-avatars" id="miniAvatars"></div>
+      <div>
+        <div class="top-title">家有大厨</div>
+        <div class="top-sub" id="topSub">想吃什么跟我说～</div>
+      </div>
+    </div>
+    <div class="top-right">
+      <div class="role-indicator" id="roleIndicator"></div>
+      <button class="logout-btn" onclick="doLogout()" title="退出登录">👋</button>
+    </div>
+  </div>
+
+  <div class="menu-body" id="menuBody">
+    <div class="side-cats" id="sideCats"></div>
+    <div class="dish-area" id="dishArea"></div>
+  </div>
+
+  <div class="cart-float hidden" id="cartFloat" onclick="showPage('page-cart')">
+    <div class="cart-float-left">
+      <div class="cart-icon-wrap">🛒<span class="cart-badge-float" id="cartBadgeFloat">0</span></div>
+      <div><div class="cart-total-text" id="cartTotalText">0 道菜</div></div>
+    </div>
+    <div class="cart-total-price" id="cartTotalPrice"><span class="u">¥</span>0</div>
+    <button class="cart-submit-btn" onclick="event.stopPropagation();showPage('page-cart')">去下单</button>
+  </div>
+</div>
+
+<!-- ================ CART PAGE ================ -->
+<div class="page" id="page-cart">
+  <div class="pg-header">
+    <button class="back-btn" onclick="showPage('page-menu')">←</button>
+    <div class="pg-title">🛒 我的菜篮</div>
+    <button class="pg-action" onclick="clearCart()">清空</button>
+  </div>
+  <div class="cart-list" id="cartList"></div>
+  <div class="love-note-box">
+    <div class="love-note-label">💌 给TA的小纸条</div>
+    <textarea class="love-note-input" id="loveMsg" placeholder="写点甜甜的话吧～"></textarea>
+  </div>
+  <div class="checkout-bar" id="checkoutBar"></div>
+</div>
+
+<!-- ================ ORDERS PAGE ================ -->
+<div class="page" id="page-orders">
+  <div class="pg-header">
+    <button class="back-btn" onclick="showPage('page-menu')">←</button>
+    <div class="pg-title">📋 点菜记录</div>
+  </div>
+  <div id="ordersList" style="padding-bottom:80px;overflow-y:auto;flex:1;"></div>
+</div>
+
+<!-- ================ MANAGE PAGE ================ -->
+<div class="page" id="page-manage">
+  <div class="pg-header">
+    <button class="back-btn" onclick="showPage('page-menu')">←</button>
+    <div class="pg-title">✏️ 管理菜品</div>
+  </div>
+  <div class="manage-list" id="manageList"></div>
+  <button class="add-dish-fab" onclick="openAddDish()">+</button>
+</div>
+
+<!-- ================ ADD/EDIT DISH MODAL ================ -->
+<div class="modal-mask" id="dishModal">
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="modalTitle">添加新菜品</div>
+    <div class="form-group">
+      <label class="form-label">📷 菜品图片</label>
+      <div class="img-upload" id="imgUpload" onclick="document.getElementById('imgInput').click()">
+        <span class="upload-icon">📸</span>
+        <span class="upload-text">点击上传美食照片</span>
+        <span class="change-hint">点击更换图片</span>
+      </div>
+      <input type="file" id="imgInput" accept="image/*" style="display:none" onchange="handleImgUpload(this)">
+    </div>
+    <div class="form-group">
+      <label class="form-label">🍽 菜品名称</label>
+      <input class="form-input" id="formName" placeholder="给这道菜取个名字">
+    </div>
+    <div class="form-group">
+      <label class="form-label">💰 价格</label>
+      <input class="form-input" id="formPrice" type="number" placeholder="0" min="0">
+    </div>
+    <div class="form-group">
+      <label class="form-label">📂 分类</label>
+      <div class="cat-select" id="catSelect"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">📝 描述（选填）</label>
+      <textarea class="form-input form-textarea" id="formDesc" placeholder="描述一下这道菜..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">💕 大厨寄语（选填）</label>
+      <textarea class="form-input form-textarea" id="formNote" placeholder="写一句甜甜的话～"></textarea>
+    </div>
+    <div class="form-btns">
+      <button class="btn-cancel" onclick="closeDishModal()">取消</button>
+      <button class="btn-save" onclick="saveDish()">保存 💕</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================ AVATAR CHANGE MODAL ================ -->
+<div class="avatar-modal" id="avatarModal">
+  <div class="avatar-modal-box">
+    <div class="sheet-title">更换头像</div>
+    <div class="avatar-preview" id="avatarPreview">😊</div>
+    <input type="file" id="avatarChangeInput" accept="image/*" style="display:none" onchange="handleAvatarChange(this)">
+    <div class="form-btns" style="margin-top:16px">
+      <button class="btn-cancel" onclick="closeAvatarModal()">取消</button>
+      <button class="btn-save" onclick="document.getElementById('avatarChangeInput').click()">选择图片 📷</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================ SUCCESS MODAL ================ -->
+<div class="success-overlay" id="successModal">
+  <div class="success-box">
+    <div class="success-emoji">👨‍🍳💕</div>
+    <div class="success-title">下单成功！</div>
+    <div class="success-desc" id="successDesc">你的点单已送到大厨手中啦～<br>马上开始为你准备 💕</div>
+    <button class="success-btn" onclick="closeSuccess()">好的，等你做好 ❤️</button>
+  </div>
+</div>
+
+<!-- ================ TAB BAR ================ -->
+<div class="tab-bar" id="tabBar" style="display:none">
+  <button class="tab-item active" onclick="switchTab('page-menu',this)">
+    <span class="tab-icon">🍽</span>
+    <span class="tab-label">点菜</span>
+  </button>
+  <button class="tab-item" onclick="switchTab('page-cart',this)" style="position:relative">
+    <span class="tab-icon">🛒</span>
+    <span class="tab-label">菜篮</span>
+    <span class="tab-badge" id="tabBadge" style="display:none">0</span>
+  </button>
+  <button class="tab-item" onclick="switchTab('page-orders',this)">
+    <span class="tab-icon">📋</span>
+    <span class="tab-label">订单</span>
+  </button>
+  <button class="tab-item" onclick="switchTab('page-manage',this)">
+    <span class="tab-icon">✏️</span>
+    <span class="tab-label">管理</span>
+  </button>
+</div>
+
+<script>
+// ==================== DATA ====================
+const categories = [
+  { name: '家常主食', icon: '🍚' },
+  { name: '硬菜大菜', icon: '🥘' },
+  { name: '清爽凉菜', icon: '🥗' },
+  { name: '汤品暖胃', icon: '🍜' },
+  { name: '饮品特调', icon: '🍸' },
+];
+
+let dishes = [
+  { id:0, name:'番茄肉酱意面', icon:'🍝', img:'', price:28, cat:0, tags:['经典'],
+    desc:'手工番茄肉酱配Q弹意面，酸甜适口', note:'这是我学的第一道西餐～' },
+  { id:1, name:'日式厚蛋烧', icon:'🍳', img:'', price:18, cat:0, tags:['日式'],
+    desc:'一层层卷出来的鸡蛋，外金黄内嫩滑', note:'每天早上做给你吃' },
+  { id:2, name:'蛋炒饭', icon:'🍚', img:'', price:15, cat:0, tags:['经典'],
+    desc:'粒粒分明，鸡蛋包裹每一粒饭', note:'你说我炒的蛋炒饭全世界最好吃！' },
+  { id:3, name:'鸡肉咖喱饭', icon:'🍛', img:'', price:32, cat:0, tags:['日式'],
+    desc:'浓郁日式咖喱搭配嫩滑鸡肉', note:'想吃的时候随时说，30分钟搞定！' },
+  { id:4, name:'三文鱼饭团', icon:'🍙', img:'', price:22, cat:0, tags:['清爽'],
+    desc:'新鲜三文鱼配寿司饭，捏成三角形', note:'我把爱心捏进了饭团里哦～' },
+  { id:5, name:'手擀面', icon:'🍜', img:'', price:20, cat:0, tags:['手工'],
+    desc:'手工擀制面条，劲道有嚼劲', note:'下雨天就给你做一碗热乎乎的面' },
+
+  { id:6, name:'黑椒牛排', icon:'🥩', img:'', price:68, cat:1, tags:['西式'],
+    desc:'精选牛排煎至五分熟，配黄油蘑菇', note:'纪念日限定款～你值得最好的' },
+  { id:7, name:'蒜蓉大虾', icon:'🍤', img:'', price:48, cat:1, tags:['海鲜'],
+    desc:'大虾开背铺金蒜，蒸至弹嫩', note:'知道你爱吃虾，专门去学的' },
+  { id:8, name:'红烧排骨', icon:'🍖', img:'', price:52, cat:1, tags:['经典'],
+    desc:'小火慢炖1小时，入口即化', note:'你吃排骨的样子超级可爱～' },
+  { id:9, name:'可乐鸡翅', icon:'🍗', img:'', price:35, cat:1, tags:['甜口'],
+    desc:'可乐炖鸡翅收汁浓稠，甜香诱人', note:'全世界你最爱可乐鸡翅对不对！' },
+  { id:10, name:'糖醋里脊', icon:'🥓', img:'', price:38, cat:1, tags:['酸甜'],
+    desc:'外酥里嫩裹糖醋汁，撒白芝麻', note:'酸酸甜甜就像我们的恋爱～' },
+
+  { id:11, name:'凉拌黄瓜', icon:'🥒', img:'', price:10, cat:2, tags:['开胃'],
+    desc:'拍碎黄瓜加蒜泥香醋辣椒油', note:'天热的时候你最爱的开胃菜' },
+  { id:12, name:'牛油果沙拉', icon:'🥑', img:'', price:28, cat:2, tags:['健康'],
+    desc:'牛油果配樱桃番茄水煮蛋生菜', note:'给你加个沙拉均衡营养～' },
+  { id:13, name:'皮蛋豆腐', icon:'🧈', img:'', price:14, cat:2, tags:['快手'],
+    desc:'嫩豆腐配松花蛋淋特调酱汁', note:'五分钟就能做好等你回家' },
+  { id:14, name:'蒜泥白肉', icon:'🥬', img:'', price:25, cat:2, tags:['川味'],
+    desc:'薄切白肉浇红油蒜泥酱汁', note:'配米饭还是配啤酒你说了算！' },
+
+  { id:15, name:'番茄蛋花汤', icon:'🍅', img:'', price:12, cat:3, tags:['经典'],
+    desc:'番茄煮软蛋花搅散加香油香菜', note:'每顿饭都要有汤，这是我的坚持' },
+  { id:16, name:'排骨莲藕汤', icon:'🥣', img:'', price:38, cat:3, tags:['滋补'],
+    desc:'排骨莲藕慢火炖2小时，汤白浓郁', note:'冬天给你炖一锅暖暖的' },
+  { id:17, name:'紫菜蛋汤', icon:'🥚', img:'', price:8, cat:3, tags:['清淡'],
+    desc:'紫菜蛋花简单调味，清淡鲜美', note:'来不及做大餐至少给你一碗热汤' },
+  { id:18, name:'银耳红枣羹', icon:'🍯', img:'', price:16, cat:3, tags:['养颜'],
+    desc:'银耳炖至出胶配红枣枸杞', note:'女孩子要多喝这个越喝越漂亮' },
+
+  { id:19, name:'手作奶茶', icon:'🧋', img:'', price:12, cat:4, tags:['手作'],
+    desc:'红茶煮浓加鲜牛奶少许糖', note:'以后奶茶不用点外卖了我给你做～' },
+  { id:20, name:'蜂蜜柠檬水', icon:'🍋', img:'', price:8, cat:4, tags:['清爽'],
+    desc:'新鲜柠檬加蜂蜜温水冲泡', note:'每天一杯维C活力满满！' },
+  { id:21, name:'热可可', icon:'☕', img:'', price:15, cat:4, tags:['冬日'],
+    desc:'纯可可粉配牛奶加棉花糖', note:'冬天窝沙发看电影的标配' },
+  { id:22, name:'桃桃乌龙茶', icon:'🍑', img:'', price:14, cat:4, tags:['果茶'],
+    desc:'水蜜桃配乌龙茶底加蜂蜜', note:'你就是我的小甜桃呀' },
+];
+
+let nextId = 100;
+let cart = {};
+let orders = [
+  {
+    id: 1, time: '03-24 19:30', status: 'done', from: 'foodie',
+    fromName: '小可爱', msg: '今晚想吃意面和银耳羹，爱你呀～',
+    items: [{ name:'番茄肉酱意面', icon:'🍝', price:28, qty:1 }, { name:'银耳红枣羹', icon:'🍯', price:16, qty:1 }],
+    total: 44,
+  },
+  {
+    id: 2, time: '03-23 12:00', status: 'done', from: 'chef',
+    fromName: '大厨', msg: '给你做你最爱的牛排配奶茶！',
+    items: [{ name:'黑椒牛排', icon:'🥩', price:68, qty:1 }, { name:'手作奶茶', icon:'🧋', price:12, qty:1 }],
+    total: 80,
+  },
+];
+
+// ====== USER STATE ======
+let currentUser = null; // { name, role, avatar }
+let loginRole = '';
+let loginAvatar = '';
+let editingDishId = null;
+let uploadedImg = '';
+let selectedCat = 0;
+let activeSideCat = 0;
+let scrollingByClick = false;
+let changingAvatarFor = ''; // 'foodie' or 'chef'
+
+// ==================== INIT ====================
+function initApp() {
+  createHearts();
+  // Try restore from localStorage
+  try {
+    const saved = localStorage.getItem('loveKitchenUser');
+    if (saved) {
+      currentUser = JSON.parse(saved);
+      enterApp();
+    }
+  } catch(e) {
+    console.log('localStorage not available');
+  }
+
+  // Setup global click handler for login page
+  document.addEventListener('click', function(e) {
+    const target = e.target;
+
+    // Avatar click
+    const avatarWrap = target.closest('#avatarWrap');
+    if (avatarWrap) {
+      document.getElementById('avatarInput').click();
+      return;
+    }
+
+    // Role card click
+    const roleCard = target.closest('.role-card');
+    if (roleCard) {
+      const role = roleCard.getAttribute('data-role');
+      selectRole(role);
+      return;
+    }
+
+    // Login button click
+    if (target.id === 'loginBtn' || target.closest('#loginBtn')) {
+      doLogin();
+      return;
+    }
+  }, true);
+}
+
+// Try DOMContentLoaded first, fall back to window.onload
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
+
+function createHearts() {
+  const c = document.getElementById('heartsBg');
+  const hs = ['💕','💗','💖','🤍','♡'];
+  for (let i = 0; i < 10; i++) {
+    const s = document.createElement('i');
+    s.textContent = hs[Math.floor(Math.random()*hs.length)];
+    s.style.left = Math.random()*100+'%';
+    s.style.animationDuration = (10+Math.random()*15)+'s';
+    s.style.animationDelay = Math.random()*12+'s';
+    s.style.fontSize = (10+Math.random()*8)+'px';
+    c.appendChild(s);
+  }
+}
+
+// ==================== LOGIN ====================
+function selectRole(role) {
+  loginRole = role;
+  document.getElementById('cardFoodie').style.background = role === 'foodie' ? 'linear-gradient(135deg, rgba(255,230,238,0.9), rgba(255,200,220,0.8))' : '';
+  document.getElementById('cardFoodie').style.borderColor = role === 'foodie' ? 'var(--pink-400)' : 'transparent';
+  document.getElementById('cardChef').style.background = role === 'chef' ? 'linear-gradient(135deg, rgba(220,238,255,0.9), rgba(180,220,255,0.8))' : '';
+  document.getElementById('cardChef').style.borderColor = role === 'chef' ? 'var(--blue-400)' : 'transparent';
+}
+
+function handleAvatar(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    loginAvatar = e.target.result;
+    const avatarDiv = document.getElementById('loginAvatar');
+    avatarDiv.innerHTML = `<img src="${loginAvatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function checkLoginReady() {
+  const name = document.getElementById('loginName').value.trim();
+  // Get selected radio value
+  const radioFoodie = document.getElementById('radioFoodie');
+  const radioChef = document.getElementById('radioChef');
+  loginRole = (radioFoodie && radioFoodie.checked) ? 'foodie' :
+               (radioChef && radioChef.checked) ? 'chef' : '';
+  const ready = !!(name && loginRole);
+  const btn = document.getElementById('loginBtn');
+  if (ready) {
+    btn.classList.remove('disabled');
+  } else {
+    btn.classList.add('disabled');
+  }
+}
+
+function doLogin() {
+  const name = document.getElementById('loginName').value;
+  if (!name || !loginRole) {
+    alert('请输入昵称并选择身份');
+    return;
+  }
+  currentUser = { name, role: loginRole, avatar: loginAvatar };
+  enterApp();
+}
+
+function doLogout() {
+  localStorage.removeItem('loveKitchenUser');
+  currentUser = null;
+  loginRole = '';
+  loginAvatar = '';
+  // Reset login form
+  const loginForm = document.getElementById('loginForm');
+  if (loginForm) {
+    loginForm.reset();
+  }
+  document.getElementById('loginAvatar').innerHTML = '😊';
+  // Show login
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-login').classList.add('active');
+  document.getElementById('tabBar').style.display = 'none';
+}
+
+function enterApp() {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-menu').classList.add('active');
+  document.getElementById('tabBar').style.display = 'flex';
+  renderTopBar();
+  renderSideCats();
+  renderDishArea();
+  setupScrollSpy();
+  renderOrders();
+  renderManageList();
+  setTimeout(setMenuBodyHeight, 50);
+}
+
+// ==================== TOP BAR ====================
+function renderTopBar() {
+  const r = currentUser.role;
+  const avatars = document.getElementById('miniAvatars');
+  // Get partner's avatar from localStorage if exists
+  const partnerKey = r === 'foodie' ? 'loveKitchenChefAvatar' : 'loveKitchenFoodieAvatar';
+  const partnerAvatar = localStorage.getItem(partnerKey);
+  
+  // My avatar
+  const myAvHtml = currentUser.avatar 
+    ? `<img src="${currentUser.avatar}">` 
+    : (r === 'foodie' ? '🤤' : '👨‍🍳');
+  
+  // Partner avatar (may be placeholder or actual image)
+  const partnerEmoji = r === 'foodie' ? '👨‍🍳' : '🤤';
+  const partnerAvHtml = partnerAvatar 
+    ? `<img src="${partnerAvatar}">` 
+    : partnerEmoji;
+  
+  // Build avatars - only my avatar is clickable
+  const myAvatarClass = r === 'foodie' ? 'foodie-av' : 'chef-av';
+  const partnerAvatarClass = r === 'foodie' ? 'chef-av' : 'foodie-av';
+  const myClickable = `onclick="openAvatarChange('${r}')"`;
+  const partnerClickable = ''; // Partner avatar not clickable
+  
+  avatars.innerHTML = `
+    <div class="mini-av ${myAvatarClass}" ${myClickable}>${myAvHtml}</div>
+    <span class="heart-mini">💕</span>
+    <div class="mini-av ${partnerAvatarClass}" ${partnerClickable}>${partnerAvHtml}</div>
+  `;
+
+  const sub = document.getElementById('topSub');
+  if (r === 'foodie') {
+    sub.textContent = `${currentUser.name}，想吃什么跟大厨说～`;
+  } else {
+    sub.textContent = `${currentUser.name}，今天给TA做点什么？`;
+  }
+
+  const ind = document.getElementById('roleIndicator');
+  if (r === 'foodie') {
+    ind.className = 'role-indicator foodie';
+    ind.innerHTML = '🤤 可爱吃货';
+  } else {
+    ind.className = 'role-indicator chef';
+    ind.innerHTML = '👨‍🍳 帅气大厨';
+  }
+}
+
+// ==================== AVATAR CHANGE ====================
+function openAvatarChange(who) {
+  // Only allow changing own avatar
+  if (who !== currentUser.role) {
+    return; // Cannot change partner's avatar
+  }
+  changingAvatarFor = who;
+  const preview = document.getElementById('avatarPreview');
+  if (who === 'foodie') {
+    preview.innerHTML = currentUser.role === 'foodie' && currentUser.avatar
+      ? `<img src="${currentUser.avatar}">` : '🤤';
+  } else {
+    preview.innerHTML = currentUser.role === 'chef' && currentUser.avatar
+      ? `<img src="${currentUser.avatar}">` : '👨‍🍳';
+  }
+  document.getElementById('avatarModal').classList.add('show');
+}
+
+function closeAvatarModal() {
+  document.getElementById('avatarModal').classList.remove('show');
+}
+
+function handleAvatarChange(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const url = e.target.result;
+    // Only allow changing own avatar
+    if (changingAvatarFor === currentUser.role) {
+      currentUser.avatar = url;
+      localStorage.setItem('loveKitchenUser', JSON.stringify(currentUser));
+    }
+    document.getElementById('avatarPreview').innerHTML = `<img src="${url}">`;
+    closeAvatarModal();
+    renderTopBar();
+    input.value = '';
+  };
+  reader.readAsDataURL(file);
+}
+
+// ==================== NAVIGATION ====================
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+
+  if (id === 'page-cart') renderCartPage();
+  if (id === 'page-orders') renderOrders();
+  if (id === 'page-manage') renderManageList();
+  if (id === 'page-menu') { setTimeout(setMenuBodyHeight, 30); }
+
+  const cf = document.getElementById('cartFloat');
+  if (id === 'page-menu') updateCartFloat();
+  else cf.classList.add('hidden');
+
+  const tabs = document.querySelectorAll('.tab-item');
+  tabs.forEach(t => t.classList.remove('active'));
+  const map = { 'page-menu':0, 'page-cart':1, 'page-orders':2, 'page-manage':3 };
+  if (map[id] !== undefined) tabs[map[id]].classList.add('active');
+}
+
+function switchTab(id, el) { showPage(id); }
+
+function setMenuBodyHeight() {
+  const topBar = document.querySelector('#page-menu .top-bar');
+  const tabBar = document.getElementById('tabBar');
+  const body = document.getElementById('menuBody');
+  if (topBar && tabBar && body) {
+    body.style.height = (window.innerHeight - topBar.offsetHeight - tabBar.offsetHeight) + 'px';
+  }
+}
+window.addEventListener('resize', setMenuBodyHeight);
+
+// ==================== SIDE CATS + DISH AREA ====================
+function renderSideCats() {
+  document.getElementById('sideCats').innerHTML = categories.map((c, i) => `
+    <button class="side-cat ${i===0?'active':''}" onclick="scrollToCategory(${i})" data-cat="${i}">
+      <span class="cat-icon">${c.icon}</span>
+      <span class="cat-name">${c.name}</span>
+    </button>
+  `).join('');
+}
+
+function renderDishArea() {
+  const el = document.getElementById('dishArea');
+  let html = '';
+  categories.forEach((cat, ci) => {
+    const catDishes = dishes.filter(d => d.cat === ci);
+    if (catDishes.length === 0) return;
+    html += `<div class="cat-section" id="catSection${ci}">`;
+    html += `<div class="cat-section-title"><span>${cat.icon}</span> ${cat.name}</div>`;
+    catDishes.forEach(d => {
+      const qty = cart[d.id] || 0;
+      const imgHtml = d.img
+        ? `<img src="${d.img}" alt="${d.name}">`
+        : `<span class="emoji-placeholder">${d.icon}</span>`;
+      html += `
+        <div class="dish-card">
+          <div class="dish-img-wrap">${imgHtml}</div>
+          <div class="dish-info">
+            <div>
+              <div class="dish-name">${d.name}</div>
+              <div class="dish-desc">${d.desc}</div>
+              ${d.tags.length ? `<div class="dish-tags">${d.tags.map(t=>`<span class="dish-tag">${t}</span>`).join('')}</div>` : ''}
+            </div>
+            <div class="dish-bottom">
+              <div class="dish-price"><span class="u">¥</span>${d.price}</div>
+              ${qty > 0
+                ? `<div class="cart-ctl">
+                    <button class="minus" onclick="modifyCart(${d.id},-1)">−</button>
+                    <span class="qty">${qty}</span>
+                    <button class="plus" onclick="modifyCart(${d.id},1)">+</button>
+                  </div>`
+                : `<button class="add-first" onclick="modifyCart(${d.id},1)">+</button>`
+              }
+            </div>
+          </div>
+        </div>`;
+    });
+    html += `</div>`;
+  });
+  el.innerHTML = html;
+}
+
+function scrollToCategory(ci) {
+  scrollingByClick = true;
+  const sec = document.getElementById('catSection' + ci);
+  if (!sec) return;
+  document.getElementById('dishArea').scrollTo({ top: sec.offsetTop - 10, behavior: 'smooth' });
+  setActiveSideCat(ci);
+  setTimeout(() => { scrollingByClick = false; }, 600);
+}
+
+function setActiveSideCat(ci) {
+  activeSideCat = ci;
+  document.querySelectorAll('.side-cat').forEach(s => s.classList.remove('active'));
+  const t = document.querySelector(`.side-cat[data-cat="${ci}"]`);
+  if (t) { t.classList.add('active'); t.scrollIntoView({ block:'nearest', behavior:'smooth' }); }
+}
+
+function setupScrollSpy() {
+  const area = document.getElementById('dishArea');
+  area.addEventListener('scroll', () => {
+    if (scrollingByClick) return;
+    const secs = area.querySelectorAll('.cat-section');
+    let cur = 0;
+    secs.forEach((s, i) => { if (s.offsetTop - area.scrollTop <= 60) cur = i; });
+    if (cur !== activeSideCat) setActiveSideCat(cur);
+  });
+}
+
+// ==================== CART ====================
+function modifyCart(dishId, delta) {
+  if (!cart[dishId]) cart[dishId] = 0;
+  cart[dishId] += delta;
+  if (cart[dishId] <= 0) delete cart[dishId];
+  renderDishArea();
+  updateCartFloat();
+  updateTabBadge();
+}
+
+function updateCartFloat() {
+  const cf = document.getElementById('cartFloat');
+  const tq = Object.values(cart).reduce((s,v)=>s+v,0);
+  const tp = Object.entries(cart).reduce((s,[id,qty])=>{
+    const d=dishes.find(x=>x.id==id); return s+(d?d.price*qty:0);
+  },0);
+  if (tq > 0) {
+    cf.classList.remove('hidden');
+    document.getElementById('cartBadgeFloat').textContent = tq;
+    document.getElementById('cartTotalText').textContent = tq + ' 道菜';
+    document.getElementById('cartTotalPrice').innerHTML = `<span class="u">¥</span>${tp}`;
+  } else { cf.classList.add('hidden'); }
+}
+
+function updateTabBadge() {
+  const tq = Object.values(cart).reduce((s,v)=>s+v,0);
+  const b = document.getElementById('tabBadge');
+  b.style.display = tq > 0 ? 'flex' : 'none';
+  b.textContent = tq;
+}
+
+function clearCart() {
+  cart = {};
+  renderCartPage(); updateCartFloat(); updateTabBadge(); renderDishArea();
+}
+
+function renderCartPage() {
+  const list = document.getElementById('cartList');
+  const bar = document.getElementById('checkoutBar');
+  const ids = Object.keys(cart);
+  if (ids.length === 0) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">🛒</div><div class="empty-text">菜篮子空空的～</div><div class="empty-hint">去挑几道爱吃的菜吧</div></div>`;
+    bar.innerHTML = '';
+    return;
+  }
+  const tp = ids.reduce((s,id)=>{const d=dishes.find(x=>x.id==id);return s+(d?d.price*cart[id]:0);},0);
+  const tq = Object.values(cart).reduce((s,v)=>s+v,0);
+  list.innerHTML = ids.map(id=>{
+    const d=dishes.find(x=>x.id==id);if(!d)return'';
+    const img=d.img?`<img src="${d.img}">`:`${d.icon}`;
+    return `<div class="cart-item"><div class="cart-item-img">${img}</div><div class="cart-item-info"><div class="cart-item-name">${d.name}</div><div class="cart-item-price">¥${d.price*cart[id]}</div></div><div class="cart-ctl"><button class="minus" onclick="cartMod(${d.id},-1)">−</button><span class="qty">${cart[id]}</span><button class="plus" onclick="cartMod(${d.id},1)">+</button></div></div>`;
+  }).join('');
+  bar.innerHTML = `<div class="checkout-total"><div class="label">共 ${tq} 道菜</div><div class="price"><span class="u">¥</span>${tp}</div></div><button class="checkout-btn" onclick="placeOrder()">下单给TA 💕</button>`;
+}
+
+function cartMod(id,d){modifyCart(id,d);renderCartPage();}
+
+// ==================== ORDER ====================
+function placeOrder() {
+  const ids = Object.keys(cart);
+  if (ids.length === 0) return;
+  const msg = document.getElementById('loveMsg')?.value || '';
+  const tp = ids.reduce((s,id)=>{const d=dishes.find(x=>x.id==id);return s+(d?d.price*cart[id]:0);},0);
+  const now = new Date();
+  const t = `${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const items = ids.map(id=>{const d=dishes.find(x=>x.id==id);return{name:d.name,icon:d.icon,price:d.price,qty:cart[id]};});
+
+  orders.unshift({
+    id: Date.now(), time: t, status: 'pending',
+    from: currentUser.role, fromName: currentUser.name,
+    msg, items, total: tp,
+  });
+
+  const who = currentUser.role === 'foodie' ? '大厨' : '吃货宝贝';
+  document.getElementById('successDesc').innerHTML = `你的点单已送到${who}手中啦～<br>马上开始为你准备 💕`;
+  document.getElementById('successModal').classList.add('show');
+  cart = {};
+  updateTabBadge();
+  if(document.getElementById('loveMsg'))document.getElementById('loveMsg').value='';
+}
+
+function closeSuccess(){
+  document.getElementById('successModal').classList.remove('show');
+  showPage('page-menu');
+  renderDishArea();
+}
+
+function renderOrders() {
+  const el = document.getElementById('ordersList');
+  if (orders.length === 0) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">还没有点菜记录</div></div>`;
+    return;
+  }
+  const sMap = {
+    pending: {text:'等待制作',cls:'pending'},
+    cooking: {text:'制作中 🔥',cls:'cooking'},
+    done: {text:'已完成 ✓',cls:'done'},
+  };
+  const isChef = currentUser && currentUser.role === 'chef';
+  el.innerHTML = orders.map(o=>{
+    const s = sMap[o.status];
+    const fromIcon = o.from === 'foodie' ? '🤤' : '👨‍🍳';
+    const toIcon = o.from === 'foodie' ? '👨‍🍳' : '🤤';
+    const fromLabel = o.fromName || (o.from === 'foodie' ? '吃货' : '大厨');
+    // Action buttons for chef
+    let actions = '';
+    if (isChef) {
+      if (o.status === 'pending') {
+        actions = `<div class="order-actions"><button class="btn-start-cook" onclick="updateOrderStatus(${o.id},'cooking')">🔥 开始制作</button></div>`;
+      } else if (o.status === 'cooking') {
+        actions = `<div class="order-actions"><button class="btn-finish-cook" onclick="updateOrderStatus(${o.id},'done')">✅ 制作完成</button></div>`;
+      }
+    }
+    return `
+      <div class="order-card">
+        <div class="order-head">
+          <div class="order-time">🕐 ${o.time}</div>
+          <span class="order-status ${s.cls}">${s.text}</span>
+        </div>
+        ${o.items.map(it=>`<div class="order-row"><span class="n">${it.icon} ${it.name} ×${it.qty}</span><span>¥${it.price*it.qty}</span></div>`).join('')}
+        <div class="order-foot">
+          <div class="order-from">${fromIcon} → ${toIcon} ${fromLabel}点的</div>
+          <div class="order-total">合计 ¥${o.total}</div>
+        </div>
+        ${o.msg?`<div class="order-msg"><span>💌</span><span>${o.msg}</span></div>`:''}
+        ${actions}
+      </div>`;
+  }).join('');
+}
+
+function updateOrderStatus(orderId, status) {
+  const o = orders.find(x => x.id === orderId);
+  if (o) { o.status = status; renderOrders(); }
+}
+
+// ==================== MANAGE ====================
+function renderManageList() {
+  const el = document.getElementById('manageList');
+  if (dishes.length === 0) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">🍽</div><div class="empty-text">还没有菜品</div><div class="empty-hint">点击 + 添加第一道菜</div></div>`;
+    return;
+  }
+  let html = '';
+  categories.forEach((cat,ci) => {
+    const cd = dishes.filter(d=>d.cat===ci);
+    if (cd.length === 0) return;
+    html += `<div style="font-size:13px;font-weight:600;color:var(--text-2);padding:12px 0 6px;display:flex;align-items:center;gap:5px">${cat.icon} ${cat.name}</div>`;
+    cd.forEach(d => {
+      const img = d.img ? `<img src="${d.img}">` : d.icon;
+      html += `<div class="manage-card"><div class="manage-img">${img}</div><div class="manage-info"><div class="manage-name">${d.name}</div><div class="manage-meta">¥${d.price} · ${cat.name}</div></div><div class="manage-actions"><button class="btn-edit" onclick="openEditDish(${d.id})">✏️</button><button class="btn-del" onclick="deleteDish(${d.id})">🗑</button></div></div>`;
+    });
+  });
+  el.innerHTML = html;
+}
+
+// ==================== ADD / EDIT DISH ====================
+function openAddDish() {
+  editingDishId = null;
+  uploadedImg = '';
+  document.getElementById('modalTitle').textContent = '添加新菜品 🍽';
+  document.getElementById('formName').value = '';
+  document.getElementById('formPrice').value = '';
+  document.getElementById('formDesc').value = '';
+  document.getElementById('formNote').value = '';
+  selectedCat = 0;
+  document.getElementById('imgUpload').innerHTML = '<span class="upload-icon">📸</span><span class="upload-text">点击上传美食照片</span><span class="change-hint">点击更换图片</span>';
+  renderCatSelect();
+  document.getElementById('dishModal').classList.add('show');
+}
+
+function openEditDish(dishId) {
+  const d = dishes.find(x=>x.id===dishId);
+  if (!d) return;
+  editingDishId = dishId;
+  uploadedImg = d.img || '';
+  document.getElementById('modalTitle').textContent = '编辑菜品 ✏️';
+  document.getElementById('formName').value = d.name;
+  document.getElementById('formPrice').value = d.price;
+  document.getElementById('formDesc').value = d.desc;
+  document.getElementById('formNote').value = d.note;
+  selectedCat = d.cat;
+  const up = document.getElementById('imgUpload');
+  up.innerHTML = d.img
+    ? `<img src="${d.img}"><span class="change-hint">点击更换图片</span>`
+    : '<span class="upload-icon">📸</span><span class="upload-text">点击上传美食照片</span><span class="change-hint">点击更换图片</span>';
+  renderCatSelect();
+  document.getElementById('dishModal').classList.add('show');
+}
+
+function closeDishModal(){document.getElementById('dishModal').classList.remove('show');}
+
+function renderCatSelect() {
+  document.getElementById('catSelect').innerHTML = categories.map((c,i)=>`
+    <div class="cat-option ${selectedCat===i?'active':''}" onclick="pickCat(${i},this)">${c.icon} ${c.name}</div>
+  `).join('');
+}
+
+function pickCat(ci,el){
+  selectedCat=ci;
+  document.querySelectorAll('.cat-option').forEach(o=>o.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function handleImgUpload(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    uploadedImg=e.target.result;
+    document.getElementById('imgUpload').innerHTML=`<img src="${uploadedImg}"><span class="change-hint">点击更换图片</span>`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveDish(){
+  const name=document.getElementById('formName').value.trim();
+  const price=parseInt(document.getElementById('formPrice').value)||0;
+  const desc=document.getElementById('formDesc').value.trim();
+  const note=document.getElementById('formNote').value.trim();
+  if(!name){alert('请输入菜品名称');return;}
+  if(price<=0){alert('请输入价格');return;}
+  if(editingDishId!==null){
+    const d=dishes.find(x=>x.id===editingDishId);
+    if(d){d.name=name;d.price=price;d.desc=desc;d.note=note;d.cat=selectedCat;if(uploadedImg)d.img=uploadedImg;}
+  }else{
+    const icons=['🍽','🥘','🍲','🥗','🍜','🍝','🥙','🫕','🍳','🥞'];
+    dishes.push({id:nextId++,name,icon:icons[Math.floor(Math.random()*icons.length)],img:uploadedImg,price,cat:selectedCat,tags:[],desc:desc||'来自家有大厨的美味',note:note||'用心做给你吃 💕'});
+  }
+  closeDishModal();
+  renderDishArea();
+  renderManageList();
+  document.getElementById('imgInput').value='';
+}
+
+function deleteDish(dishId){
+  if(!confirm('确定删除这道菜吗？'))return;
+  dishes=dishes.filter(d=>d.id!==dishId);
+  if(cart[dishId])delete cart[dishId];
+  renderDishArea();renderManageList();updateCartFloat();updateTabBadge();
+}
+</script>
+</body>
+</html>
